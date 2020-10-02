@@ -17,6 +17,8 @@ select * from WHITE_WALKERS.FABRICANTE
 
 select * from WHITE_WALKERS.MODELO
 
+select * from WHITE_WALKERS.CATEGORIA
+
 select * from WHITE_WALKERS.AUTO
 
 select * from WHITE_WALKERS.AUTO_PARTE

@@ -51,6 +51,9 @@ IF OBJECT_ID('WHITE_WALKERS.CLIENTE', 'U') IS NOT NULL
 IF OBJECT_ID('WHITE_WALKERS.SUCURSAL', 'U') IS NOT NULL 
   DROP TABLE [WHITE_WALKERS].[SUCURSAL]
 
+IF OBJECT_ID('WHITE_WALKERS.CATEGORIA', 'U') IS NOT NULL 
+  DROP TABLE [WHITE_WALKERS].[CATEGORIA]
+
 IF OBJECT_ID('tempdb..#FAC_CLIENTE') IS NOT NULL
     DROP TABLE #FAC_CLIENTE
 
@@ -199,6 +202,13 @@ CREATE TABLE [WHITE_WALKERS].[AUTO_PARTE] (
 	[AUTO_PARTE_DESCRIPCION] [nvarchar](255) NULL,
 	[MODELO_CODIGO] [decimal](18, 0) FOREIGN KEY REFERENCES [WHITE_WALKERS].[MODELO]([MODELO_CODIGO]),
 	[ID_CATEGORIA]  [decimal](18, 0) NULL,
+)
+
+GO
+
+CREATE TABLE [WHITE_WALKERS].[CATEGORIA] (
+	[ID_CATEGORIA] [decimal](18, 0)  PRIMARY KEY IDENTITY(1,1),
+	[CATEGORIA_DESC] [nvarchar](255) NULL,
 )
 
 GO
@@ -404,6 +414,39 @@ WHERE AUTO_PATENTE IS NOT NULL
 
 GO
 
+INSERT INTO [WHITE_WALKERS].[CATEGORIA]
+           ([CATEGORIA_DESC])
+VALUES
+            ('Faros')
+		   ,('Vidrios')
+		   ,('Chapa')
+		   ,('Paragolpes')
+		   ,('Cerrajeria')
+		   ,('Accesorios de linea')
+		   ,('Iluminacion')
+		   ,('Accesorios')
+		   ,('Molduras')
+		   ,('Radiadores')
+		   ,('Tapiceria')
+		   ,('Tanques')
+		   ,('Aros de Faro')
+		   ,('Encendido')
+		   ,('Mecanica')
+		   ,('Instrumental')
+		   ,('Pinturas')
+		   ,('Instrumental')
+		   ,('Acrilicos')
+		   ,('Adhesivos')
+		   ,('Antenas')
+		   ,('Volantes')
+		   ,('Fundas')
+		   ,('Alfombras')
+		   ,('Equipamiento')
+		   ,('Farol')
+		   ,('Espejos')
+
+GO
+
 INSERT INTO [WHITE_WALKERS].[AUTO_PARTE]
            ([AUTO_PARTE_CODIGO]
            ,[AUTO_PARTE_DESCRIPCION]
@@ -413,7 +456,10 @@ SELECT DISTINCT
             AUTO_PARTE_CODIGO
            ,AUTO_PARTE_DESCRIPCION
 		   ,MODELO_CODIGO
-		   ,NULL
+		   ,CASE WHEN (SELECT TOP 1 ID_CATEGORIA FROM [WHITE_WALKERS].[CATEGORIA] WHERE CONVERT(INT,RIGHT(CONVERT(VARCHAR, 100 + [gd_esquema].[Maestra].AUTO_PARTE_CODIGO), 2)) = ID_CATEGORIA ) IS NOT NULL
+					THEN (SELECT TOP 1 ID_CATEGORIA FROM [WHITE_WALKERS].[CATEGORIA] WHERE CONVERT(INT,RIGHT(CONVERT(VARCHAR, 100 + [gd_esquema].[Maestra].AUTO_PARTE_CODIGO), 2)) = ID_CATEGORIA )
+					ELSE 8 
+			END
 FROM [gd_esquema].[Maestra] 
 WHERE AUTO_PARTE_CODIGO IS NOT NULL
 
@@ -579,5 +625,9 @@ GROUP BY COMPRA_NRO, AUTO_PARTE_CODIGO, COMPRA_PRECIO
 ORDER BY COMPRA_NRO ASC, AUTO_PARTE_CODIGO ASC
 
 GO
+
+
+
+
 
 /*************************************************************/
